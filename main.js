@@ -1,30 +1,7 @@
 const gameContainer = document.getElementById("game-container");
 document.body.setAttribute("style", "height:100%; margin:0; border:0;");
 
-const npcRefArr = [];
-const npcTypes = {
-    orc: {
-        npcSymbol: 'o',
-    },
-    humanoid: {
-        npcSymbol: 'p',
-    }
-};
-
-class NonPlayerCharacter {
-        constructor(npcName, npcType, color, hitPoints, abilities) {
-            this.npcName = npcName;
-            this.npcType = npcType;
-            this.symbolColor = color;
-            this.hitPoints = hitPoints;
-            this.abilities = abilities;
-        }
-};
-
-const buildNpcRefArr = () => {
-    npcRefArr.push(new NonPlayerCharacter('Small Orc', 'orc', 'tan', '25', null));
-    npcRefArr.push(new NonPlayerCharacter('Sneaky thief', 'humanoid', 'grey', '20', null));
-};
+/* Use the function from npc.js to build an array of NPCs to refer to for this map */
 buildNpcRefArr();
 
 const playerStats = {
