@@ -22,4 +22,3 @@ const buildNpcRefArr = () => {
     npcRefArr.push(new NonPlayerCharacter('Small Orc', 'orc', 'tan', '25', null));
     npcRefArr.push(new NonPlayerCharacter('Sneaky thief', 'humanoid', 'grey', '20', null));
 };
-buildNpcRefArr();

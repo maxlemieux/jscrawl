@@ -1,3 +1,6 @@
+
+let playerLoc = [0,0];
+
 const gameContainer = document.getElementById("game-container");
 document.body.setAttribute("style", "height:100%; margin:0; border:0;");
 
@@ -20,11 +23,11 @@ const displayStats = () => {
     levelElement = document.querySelector('#level').textContent = playerStats.level;
     xpElement = document.querySelector('#xp').textContent = playerStats.xp;
 };
-displayStats();
 
 const mapNpcArr = [];
 const mapArr = [];
-const mapDimensions = [12,12];
+//const mapDimensions = [12,12];
+const mapDimensions = [80,40];
 
 const tileTypes = {
     floor: {
@@ -55,16 +58,16 @@ const getTile = () => {
 };
 
 const buildMap = () => {    
-    for (let i=0; i<mapDimensions[0]; i++) {
+    for (let i=0; i<mapDimensions[1]; i++) {
         let thisRow = [];
-        for (let j=0; j<mapDimensions[1]; j++) {
+        for (let j=0; j<mapDimensions[0]; j++) {
             const tile = getTile();
             thisRow.push(tile);
         }
         mapArr.push(thisRow);
     };
 }
-
+/*
 const drawMap = () => {
     for (i=0; i<mapDimensions[1]; i++) {
         let row = document.createElement("div");
@@ -81,9 +84,23 @@ const drawMap = () => {
         }
     };
 };
+*/
+const drawMap = () => {
+    for (i=0; i<mapDimensions[1]; i++) {
+        let row = document.createElement("div");
+        //row.setAttribute("class", "mx-auto");
+        row.setAttribute("style", "display: flex");
+        row.setAttribute("id", "r"+i);
+        gameContainer.append(row);
+    
+        for (j=0; j<mapDimensions[0]; j++) {
+          let col = document.createElement("div");
+          col.setAttribute("id", "r"+i+"c"+j);
+          row.append(col);
+        }
+    };
+};
 
-buildMap();
-drawMap();
 
 const updateMap = () => {
     for (let i=0, rowCount=mapArr.length; i<rowCount; i++) {
@@ -111,13 +128,16 @@ const updateMap = () => {
                 thisTile.innerHTML = npcTypes[col.hasNpc.npcType].npcSymbol;
                 tileColor = col.hasNpc.symbolColor;
             }
-            thisTile.setAttribute("style", `height:30px; width:30px; background:black; color: ${tileColor};)`)
+            thisTile.setAttribute("style", `height:20px; width:16px; background:black; color: ${tileColor};)`)
         };
     };
 };
+
+displayStats();
+buildMap();
+drawMap();
 updateMap();
 
-let playerLoc = [0,0];
 
 function drawPlayer(playerLoc) {
     // Get new position
