@@ -24,105 +24,6 @@ const displayStats = () => {
     xpElement = document.querySelector('#xp').textContent = playerStats.xp;
 };
 
-const mapNpcArr = [];
-const mapArr = [];
-//const mapDimensions = [12,12];
-const mapDimensions = [80,40];
-const viewportDimensions = [40,20];
-
-const tileTypes = {
-    floor: {
-        tileSymbol: '.',
-        passable: true,
-        trapped: false,
-        trapType: null,
-    },
-    wall: {
-        tileSymbol: '#',
-        passable: false,
-    }
-}
-
-const getTile = () => {
-    let thisNpc = null;
-    /* Chance to place NPC on any passable tile */
-    if (Math.random() > 0.9) {
-        thisNpc = npcRefArr[Math.floor(npcRefArr.length * Math.random())];
-        mapNpcArr.push(thisNpc);
-        //console.log(thisNpc);
-    };
-    const tile = {
-        tileType: 'floor',
-        hasNpc: thisNpc,
-    };
-    return tile;
-};
-
-const buildMap = () => {    
-    for (let i=0; i<mapDimensions[1]; i++) {
-        let thisRow = [];
-        for (let j=0; j<mapDimensions[0]; j++) {
-            const tile = getTile();
-            thisRow.push(tile);
-        }
-        mapArr.push(thisRow);
-    };
-}
-
-const drawMap = () => {
-    for (i=0; i<mapDimensions[1]; i++) {
-        let row = document.createElement("div");
-        //row.setAttribute("class", "mx-auto");
-        row.setAttribute("style", "display: flex");
-        row.setAttribute("id", "r"+i);
-        gameContainer.append(row);
-    
-        for (j=0; j<mapDimensions[0]; j++) {
-          let col = document.createElement("div");
-          col.setAttribute("id", "r"+i+"c"+j);
-          row.append(col);
-        }
-    };
-};
-
-
-const updateMap = () => {
-    for (let i=0, rowCount=mapArr.length; i<rowCount; i++) {
-        const row = mapArr[i];
-        for (let j=0, colCount=row.length; j<colCount; j++) {
-            let tileColor = 'white';
-            
-            const col = mapArr[i][j];
-            thisTile = document.getElementById(`r${i}c${j}`);
-            let tileChar;
-            
-            const tileType = col.tileType;
-            switch(tileType) {
-                case 'floor':
-                    tileChar = '.';
-                    break;
-                case 'wall': 
-                    tileChar = '#';
-                    break;
-                default:
-                    break;
-            };
-            thisTile.innerHTML = tileChar;
-            if (col.hasNpc != null) {
-                thisTile.innerHTML = npcTypes[col.hasNpc.npcType].npcSymbol;
-                tileColor = col.hasNpc.symbolColor;
-            }
-            thisTile.setAttribute("style", `height:20px; width:16px; background:black; color: ${tileColor};)`)
-        };
-    };
-};
-
-displayStats();
-buildMap();
-drawMap();
-updateMap();
-
-
 function drawPlayer(playerLoc) {
     // Get new position
     x = playerLoc[0];
@@ -132,8 +33,26 @@ function drawPlayer(playerLoc) {
     mapLoc.innerHTML = '@';
 };
 
+displayStats();
+buildMap();
+drawMap();
+updateMap();
 drawPlayer(playerLoc);
 
+/*
+    Function to handle combat. Normally, combatantOne will be the player and combatantTwo a monster.
+    However, both combatants could be monsters.
+*/
+const runCombat = (combatantOne, combatantTwo) => {
+    console.log(`${combatantOne.name} is attacking ${combatantTwo.name}!`);
+    console.log(`${combatantTwo.name} is attacking ${combatantOne.name}!`);
+}
+
+/*
+    Function to move the player on the map. 
+    Takes a direction as only parameter
+    Handles initiating combat routines and other interactions, depending on what is found on the new map tile.
+*/
 function movePlayer(direction) {
     // Remove the old player sprite
     x = parseInt(playerLoc[0]);
@@ -198,12 +117,12 @@ function movePlayer(direction) {
     };
     if (mapArr[newPlayerLoc[1]][newPlayerLoc[0]].hasNpc) {
         console.log('Moving into a monster!');
+        runCombat('player', mapArr[newPlayerLoc[1]][newPlayerLoc[0]].hasNpc);
         // lol 1-hit!
         mapArr[newPlayerLoc[1]][newPlayerLoc[0]].hasNpc = null;
         console.log(`You have slain a monster!`);
-        drawPlayer(playerLoc);
     } else {
         playerLoc = newPlayerLoc;
-        drawPlayer(playerLoc);
     };
+    drawPlayer(playerLoc);
 };
