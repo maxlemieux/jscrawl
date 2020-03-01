@@ -9,11 +9,14 @@ const npcTypes = {
 };
 
 class NonPlayerCharacter {
-        constructor(npcName, npcType, color, hitPoints, abilities) {
+        constructor(npcName, npcType, color, level, maxHitPoints, abilities) {
             this.name = npcName;
             this.npcType = npcType;
             this.symbolColor = color;
-            this.hitPoints = hitPoints;
+            this.level = level;
+            this.hitPoints = maxHitPoints;
+            this.maxHitPoints = maxHitPoints;
+            this.getMaxHitPoints = function() {return maxHitPoints};
             this.abilities = abilities;
         }
 };
@@ -28,13 +31,15 @@ const d = (numDice, numSides) => {
 };
 
 /* Define abilities that can be used by npcs and players */
-const abilities = {
+let abilities = {
     melee: {
+        name: 'melee',
         dmg: d(1,5),
         type: ['physical'],
         speed: 1.0,
     },
     fireball: {
+        name: 'Fireball',
         dmg: d(1,10),
         type: ['magic','fire'],
         speed: 1.0,
@@ -42,6 +47,6 @@ const abilities = {
 };
 
 const buildNpcRefArr = () => {
-    npcRefArr.push(new NonPlayerCharacter('Small Orc', 'orc', 'tan', '25', abilities.melee));
-    npcRefArr.push(new NonPlayerCharacter('Sneaky thief', 'humanoid', 'grey', '20', null));
+    npcRefArr.push(new NonPlayerCharacter('Small Orc', 'orc', 'tan', 1, 25, null));
+    npcRefArr.push(new NonPlayerCharacter('Sneaky thief', 'humanoid', 'grey', 1, 20, null));
 };

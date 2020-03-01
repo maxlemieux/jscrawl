@@ -7,23 +7,30 @@ document.body.setAttribute("style", "height:100%; margin:0; border:0;");
 /* Use the function from npc.js to build an array of NPCs to refer to for this map */
 buildNpcRefArr();
 
-const playerStats = {
+const playerObj = {
+    name: 'Player',
     level: 1,
     xp: 0,
     stamina: 10,
     intellect: 10,
     strength: 10,
-    hitPoints: function() {
+    maxHitPoints: function() {
         return (this.level * 1.3) * (this.stamina * 10);
-    }
+    },
+    getMaxHitPoints: function () {
+        return this.maxHitPoints();
+    },
+    hitPoints: 1,
+    abilities: [],
 };
 
 const displayStats = () => {
-    lifeElement = document.querySelector('#life-points').textContent = playerStats.hitPoints();
-    levelElement = document.querySelector('#level').textContent = playerStats.level;
-    xpElement = document.querySelector('#xp').textContent = playerStats.xp;
+    hpElement = document.querySelector('#hit-points').textContent = playerObj.hitPoints;
+    levelElement = document.querySelector('#level').textContent = playerObj.level;
+    xpElement = document.querySelector('#xp').textContent = playerObj.xp;
 };
 
+/* Draw the player on the map */
 function drawPlayer(playerLoc) {
     // Get new position
     x = playerLoc[0];
@@ -33,20 +40,61 @@ function drawPlayer(playerLoc) {
     mapLoc.innerHTML = '@';
 };
 
-displayStats();
-buildMap();
-drawMap();
-updateMap();
-drawPlayer(playerLoc);
+/* Function to load initial state of game */
+const loadGame = () => {
+    /* Set player hitpoints to maximum */
+    playerObj.hitPoints = playerObj.maxHitPoints();
+    displayStats();
+
+    /* Build map contents in memory */
+    buildMap();
+
+    /* Add map elements to the DOM */
+    drawMap();
+
+    updateMap();
+    drawPlayer(playerLoc);    
+};
+loadGame();
 
 /*
-    Function to handle combat. Normally, combatantOne will be the player and combatantTwo a monster.
+    Function to handle combat. Normally, cbOne will be the player and cbTwo a monster.
     However, both combatants could be monsters.
 */
-const runCombat = (combatantOne, combatantTwo) => {
-    console.log(`${combatantOne.name} is attacking ${combatantTwo.name}!`);
-    console.log(`${combatantTwo.name} is attacking ${combatantOne.name}!`);
-}
+const runCombat = (cbOne, abilityOne, cbTwo, abilityTwo) => {
+    /* Initialize status of combatants - set false if dead */
+    let cbOneStatus = true;
+    let cbTwoStatus = true;
+
+    /* C1 attacks C2 using A1 */
+    let cbOneAttackDmg = abilityOne.dmg * cbOne.level;
+    let newCbTwoHitPoints = cbTwo.hitPoints -= cbOneAttackDmg;
+    if (abilityOne.name === 'melee') {
+        console.log(`${cbOne.name} hits ${cbTwo.name} for ${cbOneAttackDmg} (${newCbTwoHitPoints}/${cbTwo.getMaxHitPoints()})!`);
+    } else {
+        console.log(`${cbOne.name}'s ${abilityOne.name} hits ${cbTwo.name} for ${cbOneAttackDmg}!`);
+    };
+    
+    /* If still alive, C2 attacks C1 using A2 */
+    if (newCbTwoHitPoints > 0) {
+        let cbTwoAttackDmg = abilityTwo.dmg * cbTwo.level;
+        let newCbOneHitPoints = cbOne.hitPoints -= cbTwoAttackDmg;
+        console.log(`${cbTwo.name} hits ${cbOne.name} for ${cbTwoAttackDmg} (${newCbOneHitPoints}/${cbOne.getMaxHitPoints()})!`);
+        displayStats();
+    } else {
+        /* C2 is dead, mark dead and finish up */
+        cbTwoStatus = false;
+        console.log(`${cbTwo.name} died!`);
+    };
+    
+    /* Check if C1 is still alive */
+
+    /* Return status of combatants */
+    return {
+        cbOne: cbOneStatus,
+        cbTwo: cbTwoStatus,
+    };
+};
 
 /*
     Function to move the player on the map. 
@@ -116,11 +164,18 @@ function movePlayer(direction) {
             break;
     };
     if (mapArr[newPlayerLoc[1]][newPlayerLoc[0]].hasNpc) {
-        console.log('Moving into a monster!');
-        runCombat('player', mapArr[newPlayerLoc[1]][newPlayerLoc[0]].hasNpc);
-        // lol 1-hit!
-        mapArr[newPlayerLoc[1]][newPlayerLoc[0]].hasNpc = null;
-        console.log(`You have slain a monster!`);
+        // console.log('Moving into a monster!');
+        let combatResult = runCombat(
+            playerObj, 
+            abilities.melee, 
+            mapArr[newPlayerLoc[1]][newPlayerLoc[0]].hasNpc, 
+            abilities.melee
+        );
+        /* If result indicates C2 is dead... */
+        if (combatResult.cbTwo === false) {
+            mapArr[newPlayerLoc[1]][newPlayerLoc[0]].hasNpc = null;
+            console.log(`You have slain a monster!`);
+        };
     } else {
         playerLoc = newPlayerLoc;
     };
