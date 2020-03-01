@@ -28,6 +28,7 @@ const mapNpcArr = [];
 const mapArr = [];
 //const mapDimensions = [12,12];
 const mapDimensions = [80,40];
+const viewportDimensions = [40,20];
 
 const tileTypes = {
     floor: {
@@ -67,24 +68,7 @@ const buildMap = () => {
         mapArr.push(thisRow);
     };
 }
-/*
-const drawMap = () => {
-    for (i=0; i<mapDimensions[1]; i++) {
-        let row = document.createElement("div");
-        row.setAttribute("class", "row mx-auto");
-        row.setAttribute("id", "r"+i);
-        row.setAttribute("style", "height:30px; width:360px;");
-        gameContainer.append(row);
-    
-        for (j=0; j<mapDimensions[0]; j++) {
-          let col = document.createElement("div");
-          col.setAttribute("class", "col");
-          col.setAttribute("id", "r"+i+"c"+j);
-          row.append(col);
-        }
-    };
-};
-*/
+
 const drawMap = () => {
     for (i=0; i<mapDimensions[1]; i++) {
         let row = document.createElement("div");
