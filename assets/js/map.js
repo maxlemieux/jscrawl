@@ -1,9 +1,9 @@
 const mapNpcArr = [];
 const mapArr = [];
-//const mapDimensions = [12,12];
 const mapDimensions = [80,40];
 const viewportDimensions = [40,20];
 
+/* Possible types of tiles */
 const tileTypes = {
     floor: {
         tileSymbol: '.',
@@ -17,13 +17,16 @@ const tileTypes = {
     }
 }
 
+/* Generate a tile type to draw */
 const getTile = () => {
     let thisNpc = null;
     /* Chance to place NPC on any passable tile */
     if (Math.random() > 0.9) {
+        /* Get a random NPC from the array of possible NPCs for this map */
         thisNpc = npcRefArr[Math.floor(npcRefArr.length * Math.random())];
+        
+        /* Push the NPC into the array of NPCs on this map */
         mapNpcArr.push(thisNpc);
-        //console.log(thisNpc);
     };
     const tile = {
         tileType: 'floor',
@@ -46,7 +49,6 @@ const buildMap = () => {
 const drawMap = () => {
     for (i=0; i<mapDimensions[1]; i++) {
         let row = document.createElement("div");
-        //row.setAttribute("class", "mx-auto");
         row.setAttribute("style", "display: flex");
         row.setAttribute("id", "r"+i);
         gameContainer.append(row);
@@ -66,11 +68,11 @@ const updateMap = () => {
         for (let j=0, colCount=row.length; j<colCount; j++) {
             let tileColor = 'white';
             
-            const col = mapArr[i][j];
-            thisTile = document.getElementById(`r${i}c${j}`);
+            const tile = mapArr[i][j];
+            tileElement = document.getElementById(`r${i}c${j}`);
             let tileChar;
             
-            const tileType = col.tileType;
+            const tileType = tile.tileType;
             switch(tileType) {
                 case 'floor':
                     tileChar = '.';
@@ -81,12 +83,12 @@ const updateMap = () => {
                 default:
                     break;
             };
-            thisTile.innerHTML = tileChar;
-            if (col.hasNpc != null) {
-                thisTile.innerHTML = npcTypes[col.hasNpc.npcType].npcSymbol;
-                tileColor = col.hasNpc.symbolColor;
+            tileElement.innerHTML = tileChar;
+            if (tile.hasNpc != null) {
+                tileElement.innerHTML = npcTypes[tile.hasNpc.npcType].npcSymbol;
+                tileColor = tile.hasNpc.symbolColor;
             }
-            thisTile.setAttribute("style", `height:20px; width:16px; background:black; color: ${tileColor};)`)
+            tileElement.setAttribute("style", `height:20px; width:16px; background:black; color: ${tileColor};)`)
         };
     };
 };
