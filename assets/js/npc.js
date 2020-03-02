@@ -34,13 +34,13 @@ const d = (numDice, numSides) => {
 let abilities = {
     melee: {
         name: 'melee',
-        dmg: d(1,5),
+        dmg: [1,5],
         type: ['physical'],
         speed: 1.0,
     },
     fireball: {
         name: 'Fireball',
-        dmg: d(1,10),
+        dmg: [1,10],
         type: ['magic','fire'],
         speed: 1.0,
     },

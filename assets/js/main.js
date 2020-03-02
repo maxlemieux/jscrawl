@@ -1,4 +1,3 @@
-
 let playerLoc = [0,0];
 
 const gameContainer = document.getElementById("game-container");
@@ -67,7 +66,7 @@ const runCombat = (cbOne, abilityOne, cbTwo, abilityTwo) => {
     let cbTwoStatus = true;
 
     /* C1 attacks C2 using A1 */
-    let cbOneAttackDmg = abilityOne.dmg * cbOne.level;
+    let cbOneAttackDmg = d(abilityOne.dmg[0],abilityOne.dmg[1]) * cbOne.level;
     let newCbTwoHitPoints = cbTwo.hitPoints -= cbOneAttackDmg;
     if (abilityOne.name === 'melee') {
         console.log(`${cbOne.name} hits ${cbTwo.name} for ${cbOneAttackDmg} (${newCbTwoHitPoints}/${cbTwo.getMaxHitPoints()})!`);
@@ -77,15 +76,18 @@ const runCombat = (cbOne, abilityOne, cbTwo, abilityTwo) => {
     
     /* If still alive, C2 attacks C1 using A2 */
     if (newCbTwoHitPoints > 0) {
-        let cbTwoAttackDmg = abilityTwo.dmg * cbTwo.level;
+        let cbTwoAttackDmg = d(abilityTwo.dmg[0],abilityTwo.dmg[1]) * cbTwo.level;
         let newCbOneHitPoints = cbOne.hitPoints -= cbTwoAttackDmg;
         console.log(`${cbTwo.name} hits ${cbOne.name} for ${cbTwoAttackDmg} (${newCbOneHitPoints}/${cbOne.getMaxHitPoints()})!`);
-        displayStats();
     } else {
         /* C2 is dead, mark dead and finish up */
+        cbOne.xp += 5;
         cbTwoStatus = false;
         console.log(`${cbTwo.name} died!`);
     };
+
+    /* Update stats displayed on page */
+    displayStats();
     
     /* Check if C1 is still alive */
 
